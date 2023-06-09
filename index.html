@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Work Tracker</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      color: #333333;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      margin: 50px auto;
+      max-width: 500px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+    }
+
+    select,
+    input[type="submit"] {
+      background-color: #dc3545;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .record-list {
+      margin-top: 50px;
+    }
+
+    .record-list table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .record-list th,
+    .record-list td {
+      padding: 10px;
+      border: 1px solid #333333;
+      text-align: left;
+    }
+
+    .record-list th {
+      background-color: #dc3545;
+      color: #ffffff;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .record-list td.inc {
+      color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>WORK TRACKER</h1>
+    <form id="workForm">
+      <div class="form-group">
+        <label for="date">DATE:</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+      <div class="form-group">
+        <label for="workType">WORK TYPE:</label>
+        <select id="workType" name="workType">
+          <option value="INC">Incident</option>
+          <option value="RFC">RFC</option>
+          <option value="WO">WO</option>
+          <option value="Mail">Mail</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="refNumber">REFERENCE NUMBER:</label>
+        <input type="text" id="refNumber" name="refNumber" value="NA" required>
+      </div>
+      <div class="form-group">
+        <label for="action">ACTION:</label>
+        <input type="text" id="action" name="action" value="NA" required>
+      </div>
+      <div class="form-group">
+        <label for="workTimeIssue">ISSUE IN WORKTIME:</label>
+        <input type="text" id="workTimeIssue" name="workTimeIssue" value="NA">
+      </div>
+      <div class="form-group">
+        <label for="issueStartDate">ISSUE START DATE:</label>
+        <input type="date" id="issueStartDate" name="issueStartDate">
+      </div>
+      <div class="form-group">
+        <label for="issueEndDate">ISSUE END DATE:</label>
+        <input type="date" id="issueEndDate" name="issueEndDate">
+      </div>
+      <div class="form-group">
+        <input type="submit" value="Submit" class="btn btn-primary">
+      </div>
+    </form>
+    <div class="record-list">
+      <table id="recordTable">
+        <thead>
+          <tr>
+            <th>DATE</th>
+            <th>WORK TYPE</th>
+            <th>REFERENCE NUMBER</th>
+            <th>ACTION</th>
+            <th>ISSUE IN WORKTIME</th>
+            <th>ISSUE START DATE</th>
+            <th>ISSUE END DATE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Records will be dynamically added here -->
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <button onclick="exportToCSV()" class="btn btn-primary">Download CSV</button>
+    </div>
+  </div>
+
+  <script>
+    // Function to add a new record to the table
+    function addRecord() {
+      var date = document.getElementById("date").value;
+      var workType = document.getElementById("workType").value;
+      var refNumber = document.getElementById("refNumber").value;
+      var action = document.getElementById("action").value;
+      var workTimeIssue = document.getElementById("workTimeIssue").value;
+      var issueStartDate = document.getElementById("issueStartDate").value;
+      var issueEndDate = document.getElementById("issueEndDate").value;
+
+      var tableRef = document.getElementById("recordTable").getElementsByTagName('tbody')[0];
+      var newRow = tableRef.insertRow();
+      var dateCell = newRow.insertCell();
+      var typeCell = newRow.insertCell();
+      var refCell = newRow.insertCell();
+      var actionCell = newRow.insertCell();
+      var workTimeIssueCell = newRow.insertCell();
+      var issueStartDateCell = newRow.insertCell();
+      var issueEndDateCell = newRow.insertCell();
+
+      dateCell.innerHTML = date;
+      typeCell.innerHTML = workType;
+      typeCell.classList.add("inc");
+      refCell.innerHTML = refNumber;
+      actionCell.innerHTML = action;
+      workTimeIssueCell.innerHTML = workTimeIssue;
+      issueStartDateCell.innerHTML = issueStartDate;
+      issueEndDateCell.innerHTML = issueEndDate;
+
+      document.getElementById("date").value = ""; // Clear the input fields
+      document.getElementById("refNumber").value = "";
+      document.getElementById("action").value = "";
+      document.getElementById("workTimeIssue").value = "";
+      document.getElementById("issueStartDate").value = "";
+      document.getElementById("issueEndDate").value = "";
+    }
+
+    // Function to export the table data to a CSV file
+    function exportToCSV() {
+      var table = document.getElementById("recordTable");
+      var rows = Array.from(table.getElementsByTagName("tr"));
+
+      // Construct the CSV content
+      var csvContent = rows.map(function(row) {
+        var cells = Array.from(row.getElementsByTagName("td"));
+        return cells.map(function(cell) {
+          return '"' + cell.innerText.replace(/"/g, '""') + '"';
+        }).join(",");
+      }).join("\n");
+
+      // Create a temporary <a> element to trigger the download
+      var link = document.createElement("a");
+      link.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(csvContent));
+      link.setAttribute("download", "work_records.csv");
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Clean up
+      document.body.removeChild(link);
+    }
+
+    // Attach the form submission event handler
+    document.getElementById("workForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // Prevent form submission
+
+      addRecord(); // Add the record to the table
+    });
+  </script>
+</body>
+</html>
