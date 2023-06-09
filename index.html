@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Work Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
@@ -71,6 +72,21 @@
 
     .record-list td.inc {
       color: #dc3545;
+    }
+
+    /* Responsive Styles */
+    @media (max-width: 576px) {
+      .container {
+        max-width: 100%;
+        margin: 20px;
+        padding: 10px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        max-width: 90%;
+      }
     }
   </style>
 </head>
